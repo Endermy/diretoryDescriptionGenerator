@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.29)
-project(toolDescribe)
+project(diretoryDescriptionGenerator)
 set(CXX_STANDARD 23)
 aux_source_directory(. a)
-add_executable(toolDescribe ${a})
+add_executable(DDG ${a})
