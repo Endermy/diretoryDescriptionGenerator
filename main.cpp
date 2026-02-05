@@ -1,13 +1,13 @@
 #include <iostream>
 #include <string>
 #include <filesystem>
-#include <stdio.h>
 #include <map>
 #include <vector>
 #include <fstream>
 using namespace std;
 using namespace filesystem;
 string descript;
+// wstring descript;
 map<string, string> objectList;
 const char *mdPath = "readme.md";
 fstream fp;
@@ -17,6 +17,8 @@ vector<string> line;
 #define Sdescript it->second
 int main()
 {
+	system("chcp 65001");
+	system("cls");
 	fsize = file_size(mdPath);
 	fp = fstream{mdPath, ios::in};
 	if (exists(mdPath))
@@ -29,15 +31,12 @@ int main()
 		{
 			string name, descript;
 			int pos = line[i].find(" |");
-			name = line[i].substr(0, pos);
-			descript = line[i].substr(pos + 3, line[i].size() - pos - 2);
+			descript = line[i].substr(0, pos);
+			name = line[i].substr(pos + 3, line[i].size() - pos - 5);
 			objectList[name] = descript;
 		}
 	}
 	fp.close();
-	for(auto it=objectList.begin();it!=objectList.end();it++){
-		cout<<Sname<<"|"<<Sdescript<<endl;
-	}
 
 	directory_iterator list(current_path());
 	cout << "------------------------\n";
@@ -47,7 +46,6 @@ int main()
 		auto pos = fileName.find('.');
 		if (pos != fileName.npos)
 		{
-			// cout<<pos;
 			fileName.erase(fileName.begin() + pos, fileName.end());
 		}
 		if (pos == 0)
@@ -61,7 +59,25 @@ int main()
 		}
 		else
 		{
-			cout << "descripted:" << objectList[fileName] << "input if want to redescript,else enter:" << endl;
+			cout << objectList[fileName] << " | " << fileName << endl
+				 << "descript exist,rewrite?[y,n]";
+			char selection;
+			cin >> selection;
+			switch (selection)
+			{
+			case 'Y':
+			case 'y':
+				cout << ">";
+				cin >> descript;
+				objectList[fileName] = descript;
+				break;
+			case 'N':
+			case 'n':
+				break;
+			default:
+				cout << "invalid input,break";
+				break;
+			}
 		}
 	}
 	cout << "------------------------\n";
@@ -70,7 +86,6 @@ int main()
 	fp.open(mdPath, ios::out | ios::app);
 	for (auto it = objectList.begin(); it != objectList.end(); it++)
 	{
-		cout << it->second << " | " << it->first << endl;
 		fp << (it->second + " | " + it->first + "  \n").c_str();
 	}
 	fp.close();
