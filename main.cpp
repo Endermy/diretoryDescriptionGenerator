@@ -65,7 +65,7 @@ int main()
 	if (exists(mdPath))
 	{
 		for (wstring t; getline(fp, t);)
-		{
+		{	 
 			line.push_back(t);
 		}
 		for (int i = 0; i < line.size(); i++)
