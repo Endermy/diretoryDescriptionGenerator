@@ -1,11 +1,21 @@
+#define _STDCALL_SUPPORTED
+
 #include <iostream>
 #include <string>
 #include <filesystem>
 #include <map>
 #include <vector>
 #include <fstream>
+#include "imgui.h"
+#include "imgui_impl_sdl3.h"
+#include "imgui_impl_opengl3.h"
+#include <stdio.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_opengl.h>
+using namespace ImGui;
 using namespace std;
 using namespace filesystem;
+
 string descript;
 // wstring descript;
 map<string, string> objectList;
@@ -15,6 +25,7 @@ int fsize;
 vector<string> line;
 #define Sname it->first
 #define Sdescript it->second
+
 int main()
 {
 	system("chcp 65001");
