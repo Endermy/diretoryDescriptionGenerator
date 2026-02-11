@@ -42,7 +42,7 @@ int main()
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 	float main_scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
 	SDL_WindowFlags window_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN | SDL_WINDOW_HIGH_PIXEL_DENSITY;
-	SDL_Window *window = SDL_CreateWindow("Dear ImGui SDL3+OpenGL3 example", (int)(1280 * main_scale), (int)(800 * main_scale), window_flags);
+	SDL_Window *window = SDL_CreateWindow("Diretory Description Generator", (int)(1280 * main_scale), (int)(800 * main_scale), window_flags);
 	if (window == nullptr)
 	{
 		printf("Error: SDL_CreateWindow(): %s\n", SDL_GetError());
@@ -80,7 +80,7 @@ int main()
 	bool done = false;
 	bool show_demo_window = true;
 	bool show_another_window = false;
-
+	bool show_save_done = false;
 	ImFont *font = io.Fonts->AddFontFromFileTTF(
 		"C:/Windows/Fonts/msyh.ttc",
 		24,
@@ -108,7 +108,24 @@ int main()
 		}
 	}
 	fp.close();
-
+	directory_iterator list(current_path());
+	for (auto &it : list)
+	{
+		string fileName = it.path().filename().string();
+		auto pos = fileName.find('.');
+		if (pos != fileName.npos)
+		{
+			fileName.erase(fileName.begin() + pos, fileName.end());
+		}
+		if (pos == 0)
+			continue;
+		objectList.try_emplace(fileName, "");
+	}
+	map<string, char[256]> buffer;
+	for (auto it = objectList.begin(); it != objectList.end(); it++)
+	{
+		strcpy(buffer[it->first], it->second.c_str());
+	}
 	while (!done)
 	{
 
@@ -133,7 +150,7 @@ int main()
 		NewFrame();
 		ImGui::SetNextWindowPos(viewport->WorkPos);
 		ImGui::SetNextWindowSize(viewport->WorkSize);
-		Begin("test", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
+		Begin("Diretory Description Generator", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
 		{
 			// 窗口逻辑开始
 			BeginChild("##menu", ImVec2(180, 40), ImGuiChildFlags_Borders | ImGuiChildFlags_NavFlattened);
@@ -160,17 +177,20 @@ int main()
 			}
 			EndChild();
 			BeginChild("##colors", ImVec2(0, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_NavFlattened);
-			// BeginListBox ("##input",objectList.size());
+			BeginChild("##First", ImVec2(0, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_NavFlattened);
 			for (auto it = objectList.begin(); it != objectList.end(); it++)
 			{
 				Text(it->first.c_str());
-				SameLine();
-				// static char buffer[256] = "";
-				static map<string, char[256]> buffer;
+			}
+			EndChild();
+			SameLine();
+			BeginChild("##Second", ImVec2(0, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_NavFlattened);
+			for (auto it = objectList.begin(); it != objectList.end(); it++)
+			{
 				ImGui::InputText(string("##input" + it->first).c_str(), buffer[it->first], sizeof(buffer));
 				objectList[it->first] = string(buffer[it->first]);
 			}
-			// EndColumns();
+			EndChild();
 			if (Button("save"))
 			{
 				fp.open(mdPath, ios::out | ios::trunc);
@@ -181,33 +201,14 @@ int main()
 					fp << (it->second + " | " + it->first + "  \n").c_str();
 				}
 				fp.close();
+				show_save_done = true;
+			}
+			if (show_save_done)
+			{
+				SameLine();
+				Text("save done");
 			}
 
-			static float arr[] = {0.6f, 0.1f, 1.0f, 0.5f, 0.92f, 0.1f, 0.2f};
-			ImGui::PlotLines("Frame Times", arr, IM_ARRAYSIZE(arr));
-			ImGui::PlotHistogram("Histogram", arr, IM_ARRAYSIZE(arr), 0, NULL, 0.0f, 1.0f, ImVec2(0, 80.0f));
-			static float values[90] = {};
-			static int values_offset = 0;
-			static double refresh_time = 0.0;
-			if (refresh_time == 0.0)
-				refresh_time = ImGui::GetTime();
-			while (refresh_time < ImGui::GetTime()) // Create data at fixed 60 Hz rate for the demo
-			{
-				static float phase = 0.0f;
-				values[values_offset] = cosf(phase);
-				values_offset = (values_offset + 1) % IM_ARRAYSIZE(values);
-				phase += 0.10f * values_offset;
-				refresh_time += 1.0f / 60.0f;
-			}
-			{
-				float average = 0.0f;
-				for (int n = 0; n < IM_ARRAYSIZE(values); n++)
-					average += values[n];
-				average /= (float)IM_ARRAYSIZE(values);
-				char overlay[32];
-				sprintf(overlay, "avg %f", average);
-				ImGui::PlotLines("Lines", values, IM_ARRAYSIZE(values), values_offset, overlay, -1.0f, 1.0f, ImVec2(0, 80.0f));
-			}
 			EndChild();
 		}
 
@@ -227,52 +228,6 @@ int main()
 	SDL_GL_DestroyContext(gl_context);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
-
-	//------------------------------------------------------
-
-	// directory_iterator list(current_path());
-	// cout << "------------------------\n";
-	// for (auto &it : list)
-	// {
-	// 	string fileName = it.path().filename().string();
-	// 	auto pos = fileName.find('.');
-	// 	if (pos != fileName.npos)
-	// 	{
-	// 		fileName.erase(fileName.begin() + pos, fileName.end());
-	// 	}
-	// 	if (pos == 0)
-	// 		continue;
-	// 	if (objectList[fileName] == "")
-	// 	{
-	// 		cout << "no descript,add one:";
-	// 		cout << "→" << fileName << ":";
-	// 		cin >> descript;
-	// 		objectList[fileName] = descript;
-	// 	}
-	// 	else
-	// 	{
-	// 		cout << objectList[fileName] << " | " << fileName << endl
-	// 			 << "descript exist,rewrite?[y,n]";
-	// 		char selection;
-	// 		cin >> selection;
-	// 		switch (selection)
-	// 		{
-	// 		case 'Y':
-	// 		case 'y':
-	// 			cout << ">";
-	// 			cin >> descript;
-	// 			objectList[fileName] = descript;
-	// 			break;
-	// 		case 'N':
-	// 		case 'n':
-	// 			break;
-	// 		default:
-	// 			cout << "invalid input,break";
-	// 			break;
-	// 		}
-	// 	}
-	// }
-	// cout << "------------------------\n";
 
 	return 0;
 }
