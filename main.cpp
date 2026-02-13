@@ -13,6 +13,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_opengl.h>
 #include "mygui.h"
+#include "imgui/misc/cpp/imgui_stdlib.h"
 
 using namespace ImGui;
 using namespace std;
@@ -66,7 +67,7 @@ int main()
 	(void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
-
+	io.IniFilename = NULL;
 	StyleColorsDark();
 
 	ImGuiStyle &style = GetStyle();
@@ -176,32 +177,25 @@ int main()
 				ImGui::EndMenu();
 			}
 			EndChild();
-			BeginChild("##colors", ImVec2(0, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_NavFlattened);
-			BeginGroup();
-			for (auto it = objectList.begin(); it != objectList.end(); it++)
+			ImGuiTableFlags flag = ImGuiTableFlags_Borders |
+								   ImGuiTableFlags_NoHostExtendX |
+								   ImGuiTableFlags_Resizable;
+			if (ImGui::BeginTable("table1", 3, flag))
 			{
-				Text(it->first.c_str());
-			}
-			EndGroup();
-			SameLine();
-			BeginGroup();
-			for (auto it = objectList.begin(); it != objectList.end(); it++)
-			{
-				ImGui::InputText(string("##input" + it->first).c_str(), buffer[it->first], sizeof(buffer));
-				objectList[it->first] = string(buffer[it->first]);
-			}
-			EndGroup();
-			// test
-			if (ImGui::BeginTable("table1", 3))
-			{
-				for (int row = 0; row < 4; row++)
+				TableSetupColumn("文件名", ImGuiTableColumnFlags_WidthFixed);
+				TableSetupColumn("描述", ImGuiTableColumnFlags_WidthFixed, 200.0f);
+				TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 45.0f);
+				ImGui::TableHeadersRow();
+				for (auto it = objectList.begin(); it != objectList.end(); it++)
 				{
 					ImGui::TableNextRow();
-					for (int column = 0; column < 3; column++)
-					{
-						ImGui::TableSetColumnIndex(column);
-						ImGui::Text("Row %d Column %d", row, column);
-					}
+					ImGui::TableNextColumn();
+					Text(it->first.c_str());
+					ImGui::TableNextColumn();
+					ImGui::InputText(string("##input" + it->first).c_str(), buffer[it->first], sizeof(buffer));
+					objectList[it->first] = string(buffer[it->first]);
+					ImGui::TableNextColumn();
+					Button(string("删除##" + it->first).c_str());
 				}
 				ImGui::EndTable();
 			}
@@ -223,8 +217,6 @@ int main()
 				SameLine();
 				Text("save done");
 			}
-
-			EndChild();
 		}
 
 		End();
