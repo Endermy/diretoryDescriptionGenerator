@@ -192,8 +192,7 @@ int main()
 					ImGui::TableNextColumn();
 					Text(it->first.c_str());
 					ImGui::TableNextColumn();
-					ImGui::InputText(string("##input" + it->first).c_str(), buffer[it->first], sizeof(buffer));
-					objectList[it->first] = string(buffer[it->first]);
+					ImGui::InputText(string("##input" + it->first).c_str(), &(objectList[it->first]), sizeof(buffer));
 					ImGui::TableNextColumn();
 					Button(string("删除##" + it->first).c_str());
 				}

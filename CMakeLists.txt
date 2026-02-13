@@ -13,6 +13,7 @@ set(IMGUI_BACKEND_DIR ${CMAKE_SOURCE_DIR}/include/imgui/backends)
 set(EXTRA_SRC
     ${IMGUI_BACKEND_DIR}/imgui_impl_sdl3.cpp
     ${IMGUI_BACKEND_DIR}/imgui_impl_opengl3.cpp
+    include/imgui/misc/cpp/imgui_stdlib.cpp
 )
 aux_source_directory(include/SDL3 a)
 message("buildfile:" ${BUILD_SRC} )
