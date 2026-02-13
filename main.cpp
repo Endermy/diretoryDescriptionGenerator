@@ -188,12 +188,29 @@ int main()
 					SetNextItemWidth(GetContentRegionAvail().x);
 					ImGui::InputText(string("##input" + it->first).c_str(), &(objectList[it->first]), sizeof(buffer));
 					ImGui::TableNextColumn();
-					Button(string("删除##" + it->first).c_str());
+					if (Button(string("删除##" + it->first).c_str()))
+						objectList.erase(it->first);
 				}
 				ImGui::EndTable();
 			}
 			style.FrameBorderSize = 1.0f;
-			if (Button("save"))
+			if (Button("刷新"))
+			{
+				directory_iterator list(current_path());
+				for (auto &it : list)
+				{
+					string fileName = it.path().filename().string();
+					auto pos = fileName.find('.');
+					if (pos != fileName.npos)
+					{
+						fileName.erase(fileName.begin() + pos, fileName.end());
+					}
+					if (pos == 0)
+						continue;
+					objectList.try_emplace(fileName, "");
+				}
+			}
+			if (Button("保存"))
 			{
 				fp.open(mdPath, ios::out | ios::trunc);
 				fp.close();
@@ -209,7 +226,7 @@ int main()
 			if (show_save_done)
 			{
 				SameLine();
-				Text("save done");
+				Text("已保存");
 			}
 		}
 
