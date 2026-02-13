@@ -177,20 +177,35 @@ int main()
 			}
 			EndChild();
 			BeginChild("##colors", ImVec2(0, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_NavFlattened);
-			BeginChild("##First", ImVec2(0, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_NavFlattened);
+			BeginGroup();
 			for (auto it = objectList.begin(); it != objectList.end(); it++)
 			{
 				Text(it->first.c_str());
 			}
-			EndChild();
+			EndGroup();
 			SameLine();
-			BeginChild("##Second", ImVec2(0, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_NavFlattened);
+			BeginGroup();
 			for (auto it = objectList.begin(); it != objectList.end(); it++)
 			{
 				ImGui::InputText(string("##input" + it->first).c_str(), buffer[it->first], sizeof(buffer));
 				objectList[it->first] = string(buffer[it->first]);
 			}
-			EndChild();
+			EndGroup();
+			// test
+			if (ImGui::BeginTable("table1", 3))
+			{
+				for (int row = 0; row < 4; row++)
+				{
+					ImGui::TableNextRow();
+					for (int column = 0; column < 3; column++)
+					{
+						ImGui::TableSetColumnIndex(column);
+						ImGui::Text("Row %d Column %d", row, column);
+					}
+				}
+				ImGui::EndTable();
+			}
+			// endtest
 			if (Button("save"))
 			{
 				fp.open(mdPath, ios::out | ios::trunc);
