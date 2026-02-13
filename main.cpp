@@ -152,7 +152,7 @@ int main()
 		NewFrame();
 		ImGui::SetNextWindowPos(viewport->WorkPos);
 		ImGui::SetNextWindowSize(viewport->WorkSize);
-		Begin("Diretory Description Generator", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
+		Begin("Diretory Description Generator", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 		{
 			// 窗口逻辑开始
 			BeginChild("##menu", ImVec2(180, 40), ImGuiChildFlags_Borders | ImGuiChildFlags_NavFlattened);
