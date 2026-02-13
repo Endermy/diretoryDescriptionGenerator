@@ -14,6 +14,7 @@
 #include <SDL3/SDL_opengl.h>
 #include "mygui.h"
 #include "imgui/misc/cpp/imgui_stdlib.h"
+#include "tools.hpp"
 
 using namespace ImGui;
 using namespace std;
@@ -43,7 +44,7 @@ int main()
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 	float main_scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
 	SDL_WindowFlags window_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN | SDL_WINDOW_HIGH_PIXEL_DENSITY;
-	SDL_Window *window = SDL_CreateWindow("Diretory Description Generator", (int)(1280 * main_scale), (int)(800 * main_scale), window_flags);
+	SDL_Window *window = SDL_CreateWindow("文件描述生成器", (int)(480 * main_scale), (int)(480 * main_scale), window_flags);
 	if (window == nullptr)
 	{
 		printf("Error: SDL_CreateWindow(): %s\n", SDL_GetError());
@@ -158,22 +159,13 @@ int main()
 			if (ImGui::BeginMenu("主题（Other）"))
 			{
 				if (ImGui::MenuItem("暗黑（Dark）"))
-				{
 					ImGui::StyleColorsDark();
-				}
 				if (ImGui::MenuItem("明亮（Light）"))
-				{
 					ImGui::StyleColorsLight();
-				}
 				if (ImGui::MenuItem("经典（Classic）"))
-				{
 					ImGui::StyleColorsClassic();
-				}
 				if (ImGui::MenuItem("mumu特调"))
-				{
 					GUIsetcolor();
-				}
-
 				ImGui::EndMenu();
 			}
 			EndChild();
@@ -188,17 +180,19 @@ int main()
 				ImGui::TableHeadersRow();
 				for (auto it = objectList.begin(); it != objectList.end(); it++)
 				{
+					// style.Colors[ImGuiCol_FrameBg]=ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
 					ImGui::TableNextRow();
 					ImGui::TableNextColumn();
 					Text(it->first.c_str());
 					ImGui::TableNextColumn();
+					SetNextItemWidth(GetContentRegionAvail().x);
 					ImGui::InputText(string("##input" + it->first).c_str(), &(objectList[it->first]), sizeof(buffer));
 					ImGui::TableNextColumn();
 					Button(string("删除##" + it->first).c_str());
 				}
 				ImGui::EndTable();
 			}
-			// endtest
+			style.FrameBorderSize = 1.0f;
 			if (Button("save"))
 			{
 				fp.open(mdPath, ios::out | ios::trunc);
@@ -211,6 +205,7 @@ int main()
 				fp.close();
 				show_save_done = true;
 			}
+			style.FrameBorderSize = 0;
 			if (show_save_done)
 			{
 				SameLine();
