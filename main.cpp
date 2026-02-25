@@ -29,7 +29,8 @@ int fsize;
 vector<string> line;
 #define Sname it->first
 #define Sdescript it->second
-
+#define DEFAULT_WINDOW_WIDTH 480
+#define DEFAULT_WINDOW_HEIGHT 600
 int main()
 {
 
@@ -44,7 +45,7 @@ int main()
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 	float main_scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
 	SDL_WindowFlags window_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN | SDL_WINDOW_HIGH_PIXEL_DENSITY;
-	SDL_Window *window = SDL_CreateWindow("文件描述生成器", (int)(480 * main_scale), (int)(480 * main_scale), window_flags);
+	SDL_Window *window = SDL_CreateWindow("文件描述生成器", (int)(DEFAULT_WINDOW_WIDTH * main_scale), (int)(DEFAULT_WINDOW_HEIGHT * main_scale), window_flags);
 	if (window == nullptr)
 	{
 		printf("Error: SDL_CreateWindow(): %s\n", SDL_GetError());
@@ -155,7 +156,7 @@ int main()
 		Begin("Diretory Description Generator", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 		{
 			// 窗口逻辑开始
-			BeginChild("##menu", ImVec2(180, 40), ImGuiChildFlags_Borders | ImGuiChildFlags_NavFlattened);
+			BeginChild("##menu", ImVec2(195, 60), ImGuiChildFlags_Borders | ImGuiChildFlags_NavFlattened);
 			if (ImGui::BeginMenu("主题（Other）"))
 			{
 				if (ImGui::MenuItem("暗黑（Dark）"))
@@ -176,7 +177,7 @@ int main()
 			{
 				TableSetupColumn("文件名", ImGuiTableColumnFlags_WidthFixed);
 				TableSetupColumn("描述", ImGuiTableColumnFlags_WidthFixed, 200.0f);
-				TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 45.0f);
+				TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 70.0f);
 				ImGui::TableHeadersRow();
 				for (auto it = objectList.begin(); it != objectList.end(); it++)
 				{
