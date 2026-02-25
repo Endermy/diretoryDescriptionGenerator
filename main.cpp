@@ -69,7 +69,7 @@ int main()
 	(void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
-	io.IniFilename = NULL;
+	io.IniFilename = nullptr;
 	StyleColorsDark();
 
 	ImGuiStyle &style = GetStyle();
